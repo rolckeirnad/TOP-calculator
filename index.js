@@ -38,11 +38,9 @@ function getOperator(operatorData, e) {
     if (firstNumber) {
         operator2 = operatorData.value;
         secondNumber = temp ? Number(temp) : 0;
-        temp = '';
         result = operate(operator, firstNumber, secondNumber);
         displayOperation(result);
-        firstNumber = '';
-        if (operator2 == '=') displayStr = '';
+        prepareNextOperation(operator2);
     } else {
         operator = operatorData.value;
         firstNumber = temp ? Number(temp) : 0;
@@ -58,6 +56,20 @@ function updateOperation(str) {
 function displayOperation(str) {
     displayStr = str;
     displayCurrentOperation.textContent = displayStr;
+}
+
+function prepareNextOperation(nextOperator) {
+    if (nextOperator == '=') {
+        temp = '';
+        operator = '';
+        firstNumber = '';
+        displayStr = '';
+    } else {
+        temp = '';
+        firstNumber = result;
+        operator = nextOperator;
+        displayOperation(`${firstNumber} ${operator} `);
+    }
 }
 
 
