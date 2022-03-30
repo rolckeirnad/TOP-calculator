@@ -36,10 +36,13 @@ function getKeyDigit(key, e) {
 
 function getOperator(operatorData, e) {
     if (firstNumber) {
+        operator2 = operatorData.value;
         secondNumber = temp ? Number(temp) : 0;
         temp = '';
         result = operate(operator, firstNumber, secondNumber);
         displayOperation(result);
+        firstNumber = '';
+        if (operator2 == '=') displayStr = '';
     } else {
         operator = operatorData.value;
         firstNumber = temp ? Number(temp) : 0;
@@ -61,6 +64,7 @@ function displayOperation(str) {
 let displayStr = '';
 let temp = '';
 let operator = '';
+let operator2 = '';
 let firstNumber = '';
 let secondNumber = '';
 let result = 0;
