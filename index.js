@@ -39,6 +39,7 @@ function getOperator(operatorData, e) {
         operator2 = operatorData.value;
         secondNumber = temp ? Number(temp) : 0;
         result = operate(operator, firstNumber, secondNumber);
+        saveOperation(`${displayStr} = ${result}`);
         displayOperation(result);
         prepareNextOperation(operator2);
     } else {
@@ -72,6 +73,12 @@ function prepareNextOperation(nextOperator) {
     }
 }
 
+function saveOperation (str){
+    const latestOperation = document.createElement('div');
+    latestOperation.classList.add('previous');
+    latestOperation.textContent = str;
+    prevResultsList.appendChild(latestOperation);
+}
 
 let displayStr = '';
 let temp = '';
