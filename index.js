@@ -34,18 +34,29 @@ function getKeyDigit(key, e) {
     updateOperation(key.value);
 }
 
+function getOperator(operatorData, e) {
+    operator = operatorData.value;
+    firstNumber = temp ? Number(temp) : 0;
+    temp = '';
+    displayOperation(`${firstNumber} ${operatorData.value} `);
+}
+
 function updateOperation(str) {
     displayStr += str;
     displayCurrentOperation.textContent = displayStr;
 }
-function displayOperation() {
-    displayCurrentOperation.textContent = displayStr;
+function displayOperation(str) {
+    displayStr = str;
+    displayCurrentOperation.textContent = str;
 }
 
 let displayStr = '';
 let temp = '';
+let operator = '';
 
 const displayCurrentOperation = document.querySelector('.input');
 const keysNodeList = Array.from(document.querySelectorAll('.digit'));
+const operatorsNodeList = Array.from(document.querySelectorAll('.calc'));
 
 keysNodeList.forEach(key => key.addEventListener('click', e => getKeyDigit(key.dataset, e)));
+operatorsNodeList.forEach(operator => operator.addEventListener('click', e => getOperator(operator.dataset, e)));
