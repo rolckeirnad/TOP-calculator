@@ -35,10 +35,17 @@ function getKeyDigit(key, e) {
 }
 
 function getOperator(operatorData, e) {
-    operator = operatorData.value;
-    firstNumber = temp ? Number(temp) : 0;
-    temp = '';
-    displayOperation(`${firstNumber} ${operatorData.value} `);
+    if (firstNumber) {
+        secondNumber = temp ? Number(temp) : 0;
+        temp = '';
+        result = operate(operator, firstNumber, secondNumber);
+        displayOperation(result);
+    } else {
+        operator = operatorData.value;
+        firstNumber = temp ? Number(temp) : 0;
+        temp = '';
+        displayOperation(`${firstNumber} ${operatorData.value} `);
+    }
 }
 
 function updateOperation(str) {
@@ -47,16 +54,21 @@ function updateOperation(str) {
 }
 function displayOperation(str) {
     displayStr = str;
-    displayCurrentOperation.textContent = str;
+    displayCurrentOperation.textContent = displayStr;
 }
+
 
 let displayStr = '';
 let temp = '';
 let operator = '';
+let firstNumber = '';
+let secondNumber = '';
+let result = 0;
 
 const displayCurrentOperation = document.querySelector('.input');
 const keysNodeList = Array.from(document.querySelectorAll('.digit'));
 const operatorsNodeList = Array.from(document.querySelectorAll('.calc'));
+const prevResultsList = document.querySelector('.previousResults');
 
 keysNodeList.forEach(key => key.addEventListener('click', e => getKeyDigit(key.dataset, e)));
 operatorsNodeList.forEach(operator => operator.addEventListener('click', e => getOperator(operator.dataset, e)));
