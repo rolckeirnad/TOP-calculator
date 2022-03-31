@@ -29,14 +29,20 @@ const operate = function (operator, num1, num2) {
     }
 }
 
+function roundDecimals(value, decimals = 4) {
+    return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+}
+
 function getOperand(key, e) {
-    temp += key.value;
-    updateOperation(key.value);
+    if (temp.length < 15) {
+        temp += key.value;
+        updateOperation(key.value);
+    }
 }
 
 function getOperator(operatorData, e) {
     if (firstNumber && temp && !operator && operatorData.value != '=') {
-        firstNumber = Number(temp);
+        firstNumber = roundDecimals(Number(temp));
         temp = '';
         operator = operatorData.value;
         displayOperation(`${firstNumber} ${operator} `);
@@ -46,18 +52,18 @@ function getOperator(operatorData, e) {
         displayOperation(`${firstNumber} ${operator} `);
     }
     if (firstNumber && temp && operator) {
-        secondNumber = Number(temp);
+        secondNumber = roundDecimals(Number(temp));
         temp = '';
         displayOperation(`${firstNumber} ${operator} ${secondNumber}`);
     }
     if (!firstNumber && temp && operatorData.value != '=') {
-        firstNumber = Number(temp);
+        firstNumber = roundDecimals(Number(temp));
         temp = '';
         operator = operatorData.value;
         displayOperation(`${firstNumber} ${operator} `);
     }
     if (firstNumber && secondNumber) {
-        result = operate(operator, firstNumber, secondNumber);
+        result = roundDecimals(operate(operator, firstNumber, secondNumber));
         saveOperation(displayStr, result);
         displayOperation(result);
         prepareNextOperation(operatorData.value);
@@ -83,16 +89,16 @@ function resetVariables() {
     firstNumber = '';
     secondNumber = '';
     result = '';
-    displayCurrentOperation.textContent = '\u00a0';
+    displayElement.textContent = '\u00a0';
 }
 
 function updateOperation(str) {
     displayStr += str;
-    displayCurrentOperation.textContent = displayStr;
+    displayElement.textContent = displayStr;
 }
 function displayOperation(str) {
     displayStr = str;
-    displayCurrentOperation.textContent = displayStr;
+    displayElement.textContent = displayStr;
 }
 
 function prepareNextOperation(operatorValue) {
@@ -143,6 +149,11 @@ let secondNumber = '';
 let result = '';
 
 const displayCurrentOperation = document.querySelector('.input');
+const displayElement = document.createElement('span');
+displayElement.classList.add('inputText');
+displayElement.textContent = '\u00a0';
+displayCurrentOperation.append(displayElement);
+
 const keysNodeList = Array.from(document.querySelectorAll('.digit'));
 const operatorsNodeList = Array.from(document.querySelectorAll('.calc'));
 const keyFnNodeList = Array.from(document.querySelectorAll('.function'));
