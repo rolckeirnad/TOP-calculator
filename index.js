@@ -20,7 +20,7 @@ const operate = function (operator, num1, num2) {
             return add(num1, num2);
         case '-':
             return subtract(num1, num2);
-        case 'X':
+        case 'x':
             return multiply(num1, num2);
         case '/':
             return divide(num1, num2);
