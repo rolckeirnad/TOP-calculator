@@ -50,6 +50,29 @@ function getOperator(operatorData, e) {
     }
 }
 
+function getFunction(functionData, e) {
+    switch (functionData.value) {
+        case 'CLR':
+            prevResultsList.innerHTML = '';
+            resetVariables();
+            break;
+        case 'DEL':
+            resetVariables();
+            break;
+    }
+}
+
+function resetVariables() {
+    displayStr = '';
+    temp = '';
+    operator = '';
+    operator2 = '';
+    firstNumber = '';
+    secondNumber = '';
+    result = 0;
+    displayCurrentOperation.textContent = '\u00a0';
+}
+
 function updateOperation(str) {
     displayStr += str;
     displayCurrentOperation.textContent = displayStr;
@@ -106,7 +129,9 @@ let result = 0;
 const displayCurrentOperation = document.querySelector('.input');
 const keysNodeList = Array.from(document.querySelectorAll('.digit'));
 const operatorsNodeList = Array.from(document.querySelectorAll('.calc'));
+const keyFnNodeList = Array.from(document.querySelectorAll('.function'));
 const prevResultsList = document.querySelector('.previousResults');
 
 keysNodeList.forEach(key => key.addEventListener('click', e => getKeyDigit(key.dataset, e)));
 operatorsNodeList.forEach(operator => operator.addEventListener('click', e => getOperator(operator.dataset, e)));
+keyFnNodeList.forEach(fnKey => fnKey.addEventListener('click', e => getFunction(fnKey.dataset, e)));
