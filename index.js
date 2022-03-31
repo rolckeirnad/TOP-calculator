@@ -30,6 +30,7 @@ const operate = function (operator, num1, num2) {
 }
 
 function roundDecimals(value, decimals = 4) {
+    if(!isFinite(value)) return value;
     return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
 }
 
@@ -41,28 +42,35 @@ function getOperand(key, e) {
 }
 
 function getOperator(operatorData, e) {
-    if (firstNumber && temp && !operator && operatorData.value != '=') {
+    //We have a number from past operation but we digit a different number to 
+    //operate, so replace it with the new one before get operator
+    if (firstNumber !== '' && temp && !operator && operatorData.value != '=') {
         firstNumber = roundDecimals(Number(temp));
         temp = '';
         operator = operatorData.value;
         displayOperation(`${firstNumber} ${operator} `);
     }
-    if (firstNumber && !temp && operatorData.value != '=') {
+    // If we digit another operator when already have an operator before digit the second number,
+    // replace the previous with the new one
+    if (firstNumber !== '' && !temp && operatorData.value != '=') {
         operator = operatorData.value;
         displayOperation(`${firstNumber} ${operator} `);
     }
-    if (firstNumber && temp && operator) {
+    //Get second number from temp
+    if (firstNumber !== '' && temp && operator) {
         secondNumber = roundDecimals(Number(temp));
         temp = '';
         displayOperation(`${firstNumber} ${operator} ${secondNumber}`);
     }
+    //Get first number from temp
     if (!firstNumber && temp && operatorData.value != '=') {
         firstNumber = roundDecimals(Number(temp));
         temp = '';
         operator = operatorData.value;
         displayOperation(`${firstNumber} ${operator} `);
     }
-    if (firstNumber && secondNumber) {
+    //Operate if we have two numbers
+    if (firstNumber !== '' && secondNumber !== '') {
         result = roundDecimals(operate(operator, firstNumber, secondNumber));
         saveOperation(displayStr, result);
         displayOperation(result);
