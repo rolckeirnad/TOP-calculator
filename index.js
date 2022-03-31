@@ -74,6 +74,7 @@ function prepareNextOperation(nextOperator) {
 }
 
 function saveOperation(operation, result) {
+    if (prevResultsList.childNodes.length > 4) removeOldestOperation();
     const latestOperation = document.createElement('div');
     latestOperation.classList.add('previous');
 
@@ -88,6 +89,10 @@ function saveOperation(operation, result) {
     latestOperation.appendChild(operationElement);
     latestOperation.appendChild(resultElement);
     prevResultsList.appendChild(latestOperation);
+}
+
+function removeOldestOperation() {
+    prevResultsList.removeChild(prevResultsList.firstChild);
 }
 
 let displayStr = '';
