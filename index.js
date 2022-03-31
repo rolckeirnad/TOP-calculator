@@ -30,11 +30,15 @@ const operate = function (operator, num1, num2) {
 }
 
 function roundDecimals(value, decimals = 4) {
-    if(!isFinite(value)) return value;
+    if (!isFinite(value)) return value;
     return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
 }
 
 function getOperand(key, e) {
+    if (key.value === '.') {
+        if (hasDecimal) return;
+        else hasDecimal = true;
+    }
     if (temp.length < 15) {
         temp += key.value;
         updateOperation(key.value);
@@ -45,8 +49,9 @@ function getOperator(operatorData, e) {
     //We have a number from past operation but we digit a different number to 
     //operate, so replace it with the new one before get operator
     if (firstNumber !== '' && temp && !operator && operatorData.value != '=') {
-        firstNumber = roundDecimals(Number(temp));
+        firstNumber = temp === '.' ? 0 : roundDecimals(Number(temp));
         temp = '';
+        hasDecimal = false;
         operator = operatorData.value;
         displayOperation(`${firstNumber} ${operator} `);
     }
@@ -58,14 +63,16 @@ function getOperator(operatorData, e) {
     }
     //Get second number from temp
     if (firstNumber !== '' && temp && operator) {
-        secondNumber = roundDecimals(Number(temp));
+        secondNumber = temp === '.' ? 0 : roundDecimals(Number(temp));
         temp = '';
+        hasDecimal = false;
         displayOperation(`${firstNumber} ${operator} ${secondNumber}`);
     }
     //Get first number from temp
     if (!firstNumber && temp && operatorData.value != '=') {
-        firstNumber = roundDecimals(Number(temp));
+        firstNumber = temp === '.' ? 0 : roundDecimals(Number(temp));
         temp = '';
+        hasDecimal = false;
         operator = operatorData.value;
         displayOperation(`${firstNumber} ${operator} `);
     }
@@ -93,6 +100,7 @@ function getFunction(functionData, e) {
 function resetVariables() {
     displayStr = '';
     temp = '';
+    hasDecimal = false;
     operator = '';
     firstNumber = '';
     secondNumber = '';
@@ -112,6 +120,7 @@ function displayOperation(str) {
 function prepareNextOperation(operatorValue) {
     if (operatorValue == '=') {
         temp = '';
+        hasDecimal = false;
         firstNumber = result;
         secondNumber = '';
         result = '';
@@ -119,6 +128,7 @@ function prepareNextOperation(operatorValue) {
         displayStr = '';
     } else {
         temp = '';
+        hasDecimal = false;
         firstNumber = result;
         secondNumber = '';
         result = '';
@@ -155,6 +165,7 @@ let operator = '';
 let firstNumber = '';
 let secondNumber = '';
 let result = '';
+let hasDecimal = false;
 
 const displayCurrentOperation = document.querySelector('.input');
 const displayElement = document.createElement('span');
