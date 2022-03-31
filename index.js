@@ -29,24 +29,38 @@ const operate = function (operator, num1, num2) {
     }
 }
 
-function getKeyDigit(key, e) {
+function getOperand(key, e) {
     temp += key.value;
     updateOperation(key.value);
 }
 
 function getOperator(operatorData, e) {
-    if (firstNumber) {
-        operator2 = operatorData.value;
-        secondNumber = temp ? Number(temp) : 0;
+    if (firstNumber && temp && !operator && operatorData.value != '=') {
+        firstNumber = Number(temp);
+        temp = '';
+        operator = operatorData.value;
+        displayOperation(`${firstNumber} ${operator} `);
+    }
+    if (firstNumber && !temp && operatorData.value != '=') {
+        operator = operatorData.value;
+        displayOperation(`${firstNumber} ${operator} `);
+    }
+    if (firstNumber && temp && operator) {
+        secondNumber = Number(temp);
+        temp = '';
+        displayOperation(`${firstNumber} ${operator} ${secondNumber}`);
+    }
+    if (!firstNumber && temp && operatorData.value != '=') {
+        firstNumber = Number(temp);
+        temp = '';
+        operator = operatorData.value;
+        displayOperation(`${firstNumber} ${operator} `);
+    }
+    if (firstNumber && secondNumber) {
         result = operate(operator, firstNumber, secondNumber);
         saveOperation(displayStr, result);
         displayOperation(result);
-        prepareNextOperation(operator2);
-    } else {
-        operator = operatorData.value;
-        firstNumber = temp ? Number(temp) : 0;
-        temp = '';
-        displayOperation(`${firstNumber} ${operatorData.value} `);
+        prepareNextOperation(operatorData.value);
     }
 }
 
@@ -66,10 +80,9 @@ function resetVariables() {
     displayStr = '';
     temp = '';
     operator = '';
-    operator2 = '';
     firstNumber = '';
     secondNumber = '';
-    result = 0;
+    result = '';
     displayCurrentOperation.textContent = '\u00a0';
 }
 
@@ -82,16 +95,20 @@ function displayOperation(str) {
     displayCurrentOperation.textContent = displayStr;
 }
 
-function prepareNextOperation(nextOperator) {
-    if (nextOperator == '=') {
+function prepareNextOperation(operatorValue) {
+    if (operatorValue == '=') {
         temp = '';
+        firstNumber = result;
+        secondNumber = '';
+        result = '';
         operator = '';
-        firstNumber = '';
         displayStr = '';
     } else {
         temp = '';
         firstNumber = result;
-        operator = nextOperator;
+        secondNumber = '';
+        result = '';
+        operator = operatorValue;
         displayOperation(`${firstNumber} ${operator} `);
     }
 }
@@ -121,10 +138,9 @@ function removeOldestOperation() {
 let displayStr = '';
 let temp = '';
 let operator = '';
-let operator2 = '';
 let firstNumber = '';
 let secondNumber = '';
-let result = 0;
+let result = '';
 
 const displayCurrentOperation = document.querySelector('.input');
 const keysNodeList = Array.from(document.querySelectorAll('.digit'));
@@ -132,6 +148,6 @@ const operatorsNodeList = Array.from(document.querySelectorAll('.calc'));
 const keyFnNodeList = Array.from(document.querySelectorAll('.function'));
 const prevResultsList = document.querySelector('.previousResults');
 
-keysNodeList.forEach(key => key.addEventListener('click', e => getKeyDigit(key.dataset, e)));
+keysNodeList.forEach(key => key.addEventListener('click', e => getOperand(key.dataset, e)));
 operatorsNodeList.forEach(operator => operator.addEventListener('click', e => getOperator(operator.dataset, e)));
 keyFnNodeList.forEach(fnKey => fnKey.addEventListener('click', e => getFunction(fnKey.dataset, e)));
