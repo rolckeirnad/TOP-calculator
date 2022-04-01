@@ -20,7 +20,7 @@ const operate = function (operator, num1, num2) {
             return add(num1, num2);
         case '-':
             return subtract(num1, num2);
-        case 'x':
+        case '*':
             return multiply(num1, num2);
         case '/':
             return divide(num1, num2);
@@ -48,7 +48,7 @@ function getOperand(key, e) {
 function getOperator(operatorData, e) {
     //We have a number from past operation but we digit a different number to 
     //operate, so replace it with the new one before get operator
-    if (firstNumber !== '' && temp && !operator && operatorData.value != '=') {
+    if (firstNumber !== '' && temp && !operator && operatorData.value != 'Enter') {
         firstNumber = temp === '.' ? 0 : roundDecimals(Number(temp));
         temp = '';
         hasDecimal = false;
@@ -57,7 +57,7 @@ function getOperator(operatorData, e) {
     }
     // If we digit another operator when already have an operator before digit the second number,
     // replace the previous with the new one
-    if (firstNumber !== '' && !temp && operatorData.value != '=') {
+    if (firstNumber !== '' && !temp && operatorData.value != 'Enter') {
         operator = operatorData.value;
         displayOperation(`${firstNumber} ${operator} `);
     }
@@ -69,7 +69,7 @@ function getOperator(operatorData, e) {
         displayOperation(`${firstNumber} ${operator} ${secondNumber}`);
     }
     //Get first number from temp
-    if (!firstNumber && temp && operatorData.value != '=') {
+    if (!firstNumber && temp && operatorData.value != 'Enter') {
         firstNumber = temp === '.' ? 0 : roundDecimals(Number(temp));
         temp = '';
         hasDecimal = false;
@@ -87,11 +87,11 @@ function getOperator(operatorData, e) {
 
 function getFunction(functionData, e) {
     switch (functionData.value) {
-        case 'CLR':
+        case 'Delete':
             prevResultsList.innerHTML = '';
             resetVariables();
             break;
-        case 'DEL':
+        case 'Backspace':
             if (firstNumber !== '' && operator && temp) {
                 //Remove last char from temp
                 temp = temp.slice(0, -1);
@@ -129,13 +129,13 @@ function updateOperation(str) {
     displayElement.textContent = displayStr;
 }
 function displayOperation(str) {
-    if(str.length == 0) str = '\u00a0';
+    if (str.length == 0) str = '\u00a0';
     displayStr = str;
     displayElement.textContent = displayStr;
 }
 
 function prepareNextOperation(operatorValue) {
-    if (operatorValue == '=') {
+    if (operatorValue == 'Enter') {
         temp = '';
         hasDecimal = false;
         firstNumber = result;
@@ -176,6 +176,15 @@ function removeOldestOperation() {
     prevResultsList.removeChild(prevResultsList.firstChild);
 }
 
+function keyToInput(keyPressed) {
+    const allowedKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '+', '-', '*', '/', '.', 'Enter', 'Delete', 'Backspace'];
+    if (allowedKeys.includes(keyPressed)) {
+        let button = document.querySelector(`button[data-value="${keyPressed}"]`);
+        button.click();
+    }
+}
+
 let displayStr = '';
 let temp = '';
 let operator = '';
@@ -198,3 +207,5 @@ const prevResultsList = document.querySelector('.previousResults');
 keysNodeList.forEach(key => key.addEventListener('click', e => getOperand(key.dataset, e)));
 operatorsNodeList.forEach(operator => operator.addEventListener('click', e => getOperator(operator.dataset, e)));
 keyFnNodeList.forEach(fnKey => fnKey.addEventListener('click', e => getFunction(fnKey.dataset, e)));
+
+window.addEventListener('keydown', e => keyToInput(e.key));
