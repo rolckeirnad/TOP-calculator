@@ -92,7 +92,23 @@ function getFunction(functionData, e) {
             resetVariables();
             break;
         case 'DEL':
-            resetVariables();
+            if (firstNumber !== '' && operator && temp) {
+                //Remove last char from temp
+                temp = temp.slice(0, -1);
+                displayOperation(`${firstNumber} ${operator} ${temp}`)
+            } else if (firstNumber !== '' && operator) {
+                //Remove operator
+                operator = '';
+                displayOperation(`${firstNumber}`)
+            } else {
+                //firstNumber
+                if (firstNumber !== '') {
+                    temp = firstNumber.toString();
+                    firstNumber = '';
+                }
+                temp = temp.slice(0, -1);
+                displayOperation(temp);
+            }
             break;
     }
 }
@@ -113,6 +129,7 @@ function updateOperation(str) {
     displayElement.textContent = displayStr;
 }
 function displayOperation(str) {
+    if(str.length == 0) str = '\u00a0';
     displayStr = str;
     displayElement.textContent = displayStr;
 }
